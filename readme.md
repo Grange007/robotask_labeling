@@ -4,7 +4,7 @@ Organize the files in this way:
 
 ```
 .
-├── code
+├── robotask_labeling
 │   ├── prompts
 │   ├── 1_pipeline_universal_two_stage.py
 │   ├── 2_json_reformat_two_stage.py
