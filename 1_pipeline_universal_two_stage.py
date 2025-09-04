@@ -25,7 +25,7 @@ def format_segmentation_message_universal(path_to_frames, prompt_manager, embodi
     } 
     return message
 
-def format_detailed_analysis_message_universal(path_to_frames, segments, prompt_manager, task_summary="", embodiment=None, desc=None, **kwargs):
+def format_detailed_analysis_message_universal(path_to_frames, segments, prompt_manager, task_summary="", embodiment=None, desc=None, include_step_descriptions=True, **kwargs):
     """通用的第二阶段消息格式化"""
     images = os.listdir(path_to_frames)
     images = sorted(images, key=lambda x: int(x[x.index('_')+1:x.index('.png')]))
@@ -37,8 +37,20 @@ def format_detailed_analysis_message_universal(path_to_frames, segments, prompt_
     # 获取基础prompt
     base_prompt = prompt_manager.get_detailed_prompt()
     
-    # 获取格式化的上下文
-    context = prompt_manager.format_detailed_prompt_context(segments, task_summary, desc)
+    # 根据参数决定是否包含step descriptions
+    if include_step_descriptions:
+        # 获取格式化的上下文（包含step descriptions）
+        context = prompt_manager.format_detailed_prompt_context(segments, task_summary, desc)
+    else:
+        # 只传递task_summary，不传递segments的step descriptions
+        filtered_segments = []
+        for segment in segments:
+            filtered_segment = {
+                'start_frame': segment.get('start_frame'),
+                'end_frame': segment.get('end_frame')
+            }
+            filtered_segments.append(filtered_segment)
+        context = prompt_manager.format_detailed_prompt_context(filtered_segments, task_summary, desc)
     
     # 组合完整prompt
     full_prompt = f"{base_prompt}{context}"
@@ -50,7 +62,7 @@ def format_detailed_analysis_message_universal(path_to_frames, segments, prompt_
     } 
     return message
 
-async def process_universal_two_stage_pipeline(frame_paths, desc, embodiment, prompt_version="v1", result_file=None, seg_result_file=None):
+async def process_universal_two_stage_pipeline(frame_paths, desc, embodiment, prompt_version="v1", result_file=None, seg_result_file=None, include_step_descriptions=True):
     """通用的两阶段处理管道"""
     # 记录总体开始时间
     total_start_time = time.time()
@@ -116,12 +128,11 @@ async def process_universal_two_stage_pipeline(frame_paths, desc, embodiment, pr
                 'task_summary': task_summary,
                 'version_info': version_info
             }
-            seg_results_list.append(seg_result)
-              # 第二阶段：详细分析
+            seg_results_list.append(seg_result)            # 第二阶段：详细分析
             stage2_start_time = time.time()
             print("Stage 2: Detailed analysis...")
             detail_message = format_detailed_analysis_message_universal(
-                frame_path, segments, prompt_manager, task_summary, embodiment, episode_desc
+                frame_path, segments, prompt_manager, task_summary, embodiment, episode_desc, include_step_descriptions
             )
             detail_results = await request_model([detail_message])
             stage2_end_time = time.time()
@@ -256,10 +267,19 @@ def main():
     parser.add_argument('--verbose', action='store_true', help="是否调试，调试阶段不调用api")
     parser.add_argument('--rerun', action='store_true', help="是否重跑，默认加载已有结果")
     parser.add_argument('--max', type=int, default=0, help="最大请求数，默认是0，代表不限制")
+    parser.add_argument('--include-step-descriptions', action='store_true', default=True, 
+                       help="是否在第二阶段包含第一阶段的step descriptions（默认包含）")
+    parser.add_argument('--exclude-step-descriptions', action='store_true', 
+                       help="不在第二阶段包含第一阶段的step descriptions")
     args = parser.parse_args()
 
     # 记录main函数开始时间
     main_start_time = time.time()
+    
+    # 处理step descriptions包含选项
+    include_step_descriptions = True  # 默认包含
+    if args.exclude_step_descriptions:
+        include_step_descriptions = False
     
     root_dir = args.root
     desc_file = args.json
@@ -268,12 +288,12 @@ def main():
 
     desc = parse_rtx_desc(desc_file)
     frame_paths = glob.glob(f"{root_dir}/*episode_*")
-    
-    # choose only the frames with description
+      # choose only the frames with description
     frame_paths = [p for p in frame_paths if os.path.basename(p) in desc]
     
     print(f"Available prompt versions: {get_available_versions()}")
     print(f"Using prompt version: {prompt_version}")
+    print(f"Include step descriptions in stage 2: {include_step_descriptions}")
     print()
     
     print(frame_paths)
@@ -300,9 +320,8 @@ def main():
     if not args.verbose and frame_paths:
         # 生成第一阶段结果文件路径
         seg_result_file = result_file.replace('.json', '_segmentation.json')
-        
-        # 运行通用两阶段管道
-        results = asyncio.run(process_universal_two_stage_pipeline(frame_paths, desc, args.embodiment, prompt_version, result_file, seg_result_file))
+          # 运行通用两阶段管道
+        results = asyncio.run(process_universal_two_stage_pipeline(frame_paths, desc, args.embodiment, prompt_version, result_file, seg_result_file, include_step_descriptions))
         print(f"Processed {len(results)} episodes")
         
         # 打印token使用统计

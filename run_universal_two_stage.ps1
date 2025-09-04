@@ -3,13 +3,16 @@
 
 # 设置变量
 $embodiment = "dual_arm_mine"
-$output_name = "planning_prompt_1_pick_and_place"  # 输出文件夹名称
+$timestamp = Get-Date -Format "yyyyMMdd_HHmmss"
+$output_name = "planning_prompt_1_pick_and_place_no_desc_$timestamp"  # 输出文件夹名称
 $prompt_version = "v1"  # 可选: v1 或 v2, v1 for example_segment + our_detect, v2 for our_segment+our_detect
+$exclude_step_descriptions = $true  # 设置为 $true 来排除第一阶段的step descriptions
 
 Write-Host "Starting Universal Two-Stage RTX Planning Pipeline..." -ForegroundColor Green
 Write-Host "Embodiment: $embodiment" -ForegroundColor Yellow
 Write-Host "Prompt Version: $prompt_version" -ForegroundColor Yellow
 Write-Host "Output name: $output_name" -ForegroundColor Yellow
+Write-Host "Exclude step descriptions: $exclude_step_descriptions" -ForegroundColor Yellow
 
 # 显示版本信息
 Write-Host "`nPrompt Version Info:" -ForegroundColor Cyan
@@ -23,13 +26,28 @@ if ($prompt_version -eq "v1") {
 
 # 第一步：运行通用两阶段规划管道
 Write-Host "`nStep 1: Running universal two-stage RTX planning pipeline..." -ForegroundColor Blue
-python 1_pipeline_universal_two_stage.py `
-  --embodiment=$embodiment `
-  --root=../demo_frames_mine `
-  --json=../demo_description/my_desc.json `
-  --output=../demo_output/${output_name}/${prompt_version}.json `
-  --prompt-version=$prompt_version `
-  --max=10
+
+# 构建Python命令参数
+$python_args = @(
+    "1_pipeline_universal_two_stage.py",
+    "--embodiment=$embodiment",
+    "--root=../demo_frames_mine",
+    "--json=../demo_description/my_desc.json",
+    "--output=../demo_output/${output_name}/${prompt_version}.json",
+    "--prompt-version=$prompt_version",
+    "--max=10"
+)
+
+# 根据设置添加step descriptions参数
+if ($exclude_step_descriptions) {
+    $python_args += "--exclude-step-descriptions"
+    Write-Host "  Note: Step descriptions from stage 1 will be excluded from stage 2" -ForegroundColor Yellow
+} else {
+    Write-Host "  Note: Step descriptions from stage 1 will be included in stage 2 (default)" -ForegroundColor Yellow
+}
+
+# 执行Python命令
+python @python_args
 
 # 检查第一步是否成功
 if ($LASTEXITCODE -eq 0) {
