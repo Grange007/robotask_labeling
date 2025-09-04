@@ -3,7 +3,7 @@
 
 # 设置变量
 $embodiment = "dual_arm_mine"
-$output_name = "example_seg_test_9_1"
+$output_name = "planning_prompt_1_pick_and_place"  # 输出文件夹名称
 $prompt_version = "v1"  # 可选: v1 或 v2, v1 for example_segment + our_detect, v2 for our_segment+our_detect
 
 Write-Host "Starting Universal Two-Stage RTX Planning Pipeline..." -ForegroundColor Green

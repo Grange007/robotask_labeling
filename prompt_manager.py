@@ -14,7 +14,7 @@ class PromptManager:
     def _load_prompts(self):
         """根据版本加载对应的prompt"""
         if self.prompt_version == "v1":
-            from prompts.planning_prompt_1 import SEGMENTATION_PROMPT, DETAILED_ANALYSIS_PROMPT
+            from prompts.planning_prompt_1_pick_and_place import SEGMENTATION_PROMPT, DETAILED_ANALYSIS_PROMPT
             self.segmentation_prompt = SEGMENTATION_PROMPT
             self.detailed_prompt = DETAILED_ANALYSIS_PROMPT
             self.output_format = "task_summary_steps"

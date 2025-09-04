@@ -49,7 +49,7 @@ def format_detailed_analysis_message_universal(path_to_frames, segments, prompt_
     } 
     return message
 
-async def process_universal_two_stage_pipeline(frame_paths, desc, embodiment, prompt_version="v1"):
+async def process_universal_two_stage_pipeline(frame_paths, desc, embodiment, prompt_version="v1", result_file=None):
     """通用的两阶段处理管道"""
     prompt_manager = create_prompt_manager(prompt_version)
     version_info = prompt_manager.get_version_info()
@@ -72,6 +72,14 @@ async def process_universal_two_stage_pipeline(frame_paths, desc, embodiment, pr
             # 第一阶段：分割
             print("Stage 1: Segmentation...")
             seg_message = format_segmentation_message_universal(frame_path, prompt_manager, embodiment, episode_desc)
+
+            # prompt_store_path = os.path.join(os.path.pardir(result_file), f"{episode_name}_prompt.txt")
+            # print(f"Storing prompt to {prompt_store_path}")
+            # print(f"Prompt:\n{seg_message['prompt']}\n")
+            # os.makedirs(os.path.dirname(prompt_store_path), exist_ok=True)
+            # with open(prompt_store_path, 'w', encoding='utf-8') as f:
+            #     f.write(seg_message['prompt'])
+
             seg_results = await request_model([seg_message])
             
             if not seg_results or not seg_results[0].get('response'):
@@ -169,7 +177,7 @@ def main():
     
     if not args.verbose and frame_paths:
         # 运行通用两阶段管道
-        results = asyncio.run(process_universal_two_stage_pipeline(frame_paths, desc, args.embodiment, prompt_version))
+        results = asyncio.run(process_universal_two_stage_pipeline(frame_paths, desc, args.embodiment, prompt_version, result_file))
         print(f"Processed {len(results)} episodes")
         
         # 打印token使用统计
