@@ -48,7 +48,7 @@ For Linux:
 For Windows (PowerShell):
 
 ```powershell
-./run_universal_two_stage.ps1
+.\run_universal_two_stage.ps1
 ```
 
 To prohibit sending the step_description from stage 1 to stage 2, set `exclude_step_descriptions` to `true` in scripts before running the pipeline.
