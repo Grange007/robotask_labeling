@@ -4,7 +4,7 @@
 # 设置变量
 $embodiment = "dual_arm_mine"
 $timestamp = Get-Date -Format "yyyyMMdd_HHmmss"
-$output_name = "planning_prompt_1_pick_and_place_no_desc_$timestamp"  # 输出文件夹名称
+$output_name = "planning_prompt_with_skills_no_desc_$timestamp"  # 输出文件夹名称
 $prompt_version = "v1"  # 可选: v1 或 v2, v1 for example_segment + our_detect, v2 for our_segment+our_detect
 $exclude_step_descriptions = $true  # 设置为 $true 来排除第一阶段的step descriptions
 
