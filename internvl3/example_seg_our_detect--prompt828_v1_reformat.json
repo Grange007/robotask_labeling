@@ -1,0 +1,671 @@
+[
+  {
+    "id": "../demo_frames_mine\\franka_fr3_dualArm-gripper-6cameras_2_find_out_packaging_tape_into_the_other_basket_20250507_observation.rgb_images.camera_top_episode_000000.mp4_sampled_rank0",
+    "episode_name": "franka_fr3_dualArm-gripper-6cameras_2_find_out_packaging_tape_into_the_other_basket_20250507_observation.rgb_images.camera_top_episode_000000.mp4_sampled_rank0",
+    "task_summary": "A robotic arm picks a roll of tape from a tray, and a second arm picks it up from the table to place it in a basket.",
+    "segmentation": {
+      "task_summary": "A robotic arm picks a roll of tape from a tray, and a second arm picks it up from the table to place it in a basket.",
+      "steps": [
+        {
+          "step_description": "Pick the roll of tape from the yellow tray.",
+          "start_frame": 7,
+          "end_frame": 14
+        },
+        {
+          "step_description": "Place the roll of tape on the table.",
+          "start_frame": 15,
+          "end_frame": 19
+        },
+        {
+          "step_description": "Pick the roll of tape from the table.",
+          "start_frame": 20,
+          "end_frame": 25
+        },
+        {
+          "step_description": "Place the roll of tape into the brown basket.",
+          "start_frame": 26,
+          "end_frame": 30
+        }
+      ]
+    },
+    "detailed_analysis": {
+      "segments_of_sub_actions": [
+        {
+          "start_frame": 7,
+          "end_frame": 14,
+          "validity": "",
+          "action": {
+            "verb": "Pick / Grasp",
+            "object": "yellow tape roll",
+            "start_location": "inside the bottom left compartment of the yellow tray",
+            "end_location": "inside the bottom left compartment of the yellow tray",
+            "remarks": ""
+          },
+          "sub_action_instruction": "Pick / Grasp the yellow tape roll at inside the bottom left compartment of the yellow tray"
+        },
+        {
+          "start_frame": 15,
+          "end_frame": 19,
+          "validity": "",
+          "action": {
+            "verb": "Place",
+            "object": "yellow tape roll",
+            "start_location": "above the yellow tray",
+            "end_location": "on the brown table, between the brown basket and the yellow tray",
+            "remarks": ""
+          },
+          "sub_action_instruction": "Place the yellow tape roll from above the yellow tray to on the brown table, between the brown basket and the yellow tray"
+        },
+        {
+          "start_frame": 20,
+          "end_frame": 25,
+          "validity": "",
+          "action": {
+            "verb": "Pick / Grasp",
+            "object": "yellow tape roll",
+            "start_location": "on the brown table, between the brown basket and the yellow tray",
+            "end_location": "on the brown table, between the brown basket and the yellow tray",
+            "remarks": ""
+          },
+          "sub_action_instruction": "Pick / Grasp the yellow tape roll at on the brown table, between the brown basket and the yellow tray"
+        },
+        {
+          "start_frame": 26,
+          "end_frame": 30,
+          "validity": "",
+          "action": {
+            "verb": "Place",
+            "object": "yellow tape roll",
+            "start_location": "on the brown table, between the brown basket and the yellow tray",
+            "end_location": "inside the brown basket",
+            "remarks": ""
+          },
+          "sub_action_instruction": "Place the yellow tape roll from on the brown table, between the brown basket and the yellow tray to inside the brown basket"
+        }
+      ]
+    },
+    "parsed_segments": [
+      {
+        "start_frame": 7,
+        "end_frame": 14,
+        "step_description": "Pick the roll of tape from the yellow tray."
+      },
+      {
+        "start_frame": 15,
+        "end_frame": 19,
+        "step_description": "Place the roll of tape on the table."
+      },
+      {
+        "start_frame": 20,
+        "end_frame": 25,
+        "step_description": "Pick the roll of tape from the table."
+      },
+      {
+        "start_frame": 26,
+        "end_frame": 30,
+        "step_description": "Place the roll of tape into the brown basket."
+      }
+    ],
+    "raw_responses": {
+      "segmentation": "```json\n{\n  \"task_summary\": \"A robotic arm picks a roll of tape from a tray, and a second arm picks it up from the table to place it in a basket.\",\n  \"steps\": [\n    {\n      \"step_description\": \"Pick the roll of tape from the yellow tray.\",\n      \"start_frame\": 7,\n      \"end_frame\": 14\n    },\n    {\n      \"step_description\": \"Place the roll of tape on the table.\",\n      \"start_frame\": 15,\n      \"end_frame\": 19\n    },\n    {\n      \"step_description\": \"Pick the roll of tape from the table.\",\n      \"start_frame\": 20,\n      \"end_frame\": 25\n    },\n    {\n      \"step_description\": \"Place the roll of tape into the brown basket.\",\n      \"start_frame\": 26,\n      \"end_frame\": 30\n    }\n  ]\n}\n```",
+      "detailed_analysis": "```json\n{\n  \"segments_of_sub_actions\": [\n    {\n      \"start_frame\": 7,\n      \"end_frame\": 14,\n      \"validity\": \"\",\n      \"action\": {\n        \"verb\": \"Pick / Grasp\",\n        \"object\": \"yellow tape roll\",\n        \"start_location\": \"inside the bottom left compartment of the yellow tray\",\n        \"end_location\": \"inside the bottom left compartment of the yellow tray\",\n        \"remarks\": \"\"\n      },\n      \"sub_action_instruction\": \"Pick / Grasp the yellow tape roll at inside the bottom left compartment of the yellow tray\"\n    },\n    {\n      \"start_frame\": 15,\n      \"end_frame\": 19,\n      \"validity\": \"\",\n      \"action\": {\n        \"verb\": \"Place\",\n        \"object\": \"yellow tape roll\",\n        \"start_location\": \"above the yellow tray\",\n        \"end_location\": \"on the brown table, between the brown basket and the yellow tray\",\n        \"remarks\": \"\"\n      },\n      \"sub_action_instruction\": \"Place the yellow tape roll from above the yellow tray to on the brown table, between the brown basket and the yellow tray\"\n    },\n    {\n      \"start_frame\": 20,\n      \"end_frame\": 25,\n      \"validity\": \"\",\n      \"action\": {\n        \"verb\": \"Pick / Grasp\",\n        \"object\": \"yellow tape roll\",\n        \"start_location\": \"on the brown table, between the brown basket and the yellow tray\",\n        \"end_location\": \"on the brown table, between the brown basket and the yellow tray\",\n        \"remarks\": \"\"\n      },\n      \"sub_action_instruction\": \"Pick / Grasp the yellow tape roll at on the brown table, between the brown basket and the yellow tray\"\n    },\n    {\n      \"start_frame\": 26,\n      \"end_frame\": 30,\n      \"validity\": \"\",\n      \"action\": {\n        \"verb\": \"Place\",\n        \"object\": \"yellow tape roll\",\n        \"start_location\": \"on the brown table, between the brown basket and the yellow tray\",\n        \"end_location\": \"inside the brown basket\",\n        \"remarks\": \"\"\n      },\n      \"sub_action_instruction\": \"Place the yellow tape roll from on the brown table, between the brown basket and the yellow tray to inside the brown basket\"\n    }\n  ]\n}\n```"
+    }
+  },
+  {
+    "id": "../demo_frames_mine\\franka_fr3_dualArm-gripper-6cameras_2_insert_yellow_block_toy_into_buildingblocks_250513_observation.rgb_images.camera_top_episode_000000.mp4_sampled_rank0",
+    "episode_name": "franka_fr3_dualArm-gripper-6cameras_2_insert_yellow_block_toy_into_buildingblocks_250513_observation.rgb_images.camera_top_episode_000000.mp4_sampled_rank0",
+    "task_summary": "A robotic arm picks up a yellow block and inserts it into a white building block base.",
+    "segmentation": {
+      "task_summary": "A robotic arm picks up a yellow block and inserts it into a white building block base.",
+      "steps": [
+        {
+          "step_description": "Push the white building block with the right arm.",
+          "start_frame": 11,
+          "end_frame": 28
+        },
+        {
+          "step_description": "Pick the yellow block with the left arm.",
+          "start_frame": 29,
+          "end_frame": 37
+        },
+        {
+          "step_description": "Insert the yellow block into the white building block.",
+          "start_frame": 38,
+          "end_frame": 53
+        }
+      ]
+    },
+    "detailed_analysis": {
+      "segments_of_sub_actions": [
+        {
+          "start_frame": 11,
+          "end_frame": 28,
+          "validity": "",
+          "action": {
+            "verb": "Push",
+            "object": "white building block base",
+            "start_location": "right side of the brown table",
+            "end_location": "center of the brown table",
+            "remarks": ""
+          },
+          "sub_action_instruction": "Push the white building block base from the right side of the brown table to the center of the brown table"
+        },
+        {
+          "start_frame": 29,
+          "end_frame": 37,
+          "validity": "",
+          "action": {
+            "verb": "Pick / Grasp",
+            "object": "yellow block",
+            "start_location": "left side of the brown table",
+            "end_location": "left side of the brown table",
+            "remarks": ""
+          },
+          "sub_action_instruction": "Pick / Grasp the yellow block at the left side of the brown table"
+        },
+        {
+          "start_frame": 38,
+          "end_frame": 53,
+          "validity": "",
+          "action": {
+            "verb": "Insert",
+            "object": "yellow block",
+            "start_location": "left side of the brown table",
+            "end_location": "white building block base at the center of the brown table",
+            "remarks": ""
+          },
+          "sub_action_instruction": "Insert the yellow block from the left side of the brown table to the white building block base at the center of the brown table"
+        }
+      ]
+    },
+    "parsed_segments": [
+      {
+        "start_frame": 11,
+        "end_frame": 28,
+        "step_description": "Push the white building block with the right arm."
+      },
+      {
+        "start_frame": 29,
+        "end_frame": 37,
+        "step_description": "Pick the yellow block with the left arm."
+      },
+      {
+        "start_frame": 38,
+        "end_frame": 53,
+        "step_description": "Insert the yellow block into the white building block."
+      }
+    ],
+    "raw_responses": {
+      "segmentation": "```json\n{\n  \"task_summary\": \"A robotic arm picks up a yellow block and inserts it into a white building block base.\",\n  \"steps\": [\n    {\n      \"step_description\": \"Push the white building block with the right arm.\",\n      \"start_frame\": 11,\n      \"end_frame\": 28\n    },\n    {\n      \"step_description\": \"Pick the yellow block with the left arm.\",\n      \"start_frame\": 29,\n      \"end_frame\": 37\n    },\n    {\n      \"step_description\": \"Insert the yellow block into the white building block.\",\n      \"start_frame\": 38,\n      \"end_frame\": 53\n    }\n  ]\n}\n```",
+      "detailed_analysis": "```json\n{\n  \"segments_of_sub_actions\": [\n    {\n      \"start_frame\": 11,\n      \"end_frame\": 28,\n      \"validity\": \"\",\n      \"action\": {\n        \"verb\": \"Push\",\n        \"object\": \"white building block base\",\n        \"start_location\": \"right side of the brown table\",\n        \"end_location\": \"center of the brown table\",\n        \"remarks\": \"\"\n      },\n      \"sub_action_instruction\": \"Push the white building block base from the right side of the brown table to the center of the brown table\"\n    },\n    {\n      \"start_frame\": 29,\n      \"end_frame\": 37,\n      \"validity\": \"\",\n      \"action\": {\n        \"verb\": \"Pick / Grasp\",\n        \"object\": \"yellow block\",\n        \"start_location\": \"left side of the brown table\",\n        \"end_location\": \"left side of the brown table\",\n        \"remarks\": \"\"\n      },\n      \"sub_action_instruction\": \"Pick / Grasp the yellow block at the left side of the brown table\"\n    },\n    {\n      \"start_frame\": 38,\n      \"end_frame\": 53,\n      \"validity\": \"\",\n      \"action\": {\n        \"verb\": \"Insert\",\n        \"object\": \"yellow block\",\n        \"start_location\": \"left side of the brown table\",\n        \"end_location\": \"white building block base at the center of the brown table\",\n        \"remarks\": \"\"\n      },\n      \"sub_action_instruction\": \"Insert the yellow block from the left side of the brown table to the white building block base at the center of the brown table\"\n    }\n  ]\n}\n```"
+    }
+  },
+  {
+    "id": "../demo_frames_mine\\franka_fr3_dualArm-gripper-6cameras_2_stack_the_bowl_250513_observation.rgb_images.camera_top_episode_000000.mp4_sampled_rank0",
+    "episode_name": "franka_fr3_dualArm-gripper-6cameras_2_stack_the_bowl_250513_observation.rgb_images.camera_top_episode_000000.mp4_sampled_rank0",
+    "task_summary": "Stack the blue bowl on the green bowl using two robotic arms.",
+    "segmentation": {
+      "task_summary": "Stack the blue bowl on the green bowl using two robotic arms.",
+      "steps": [
+        {
+          "step_description": "Push the green bowl with the right arm.",
+          "start_frame": 10,
+          "end_frame": 22
+        },
+        {
+          "step_description": "Pick the blue bowl with the left arm.",
+          "start_frame": 27,
+          "end_frame": 33
+        },
+        {
+          "step_description": "Place the blue bowl on the green bowl.",
+          "start_frame": 34,
+          "end_frame": 37
+        }
+      ]
+    },
+    "detailed_analysis": {
+      "segments_of_sub_actions": [
+        {
+          "start_frame": 10,
+          "end_frame": 22,
+          "validity": "",
+          "action": {
+            "verb": "Push",
+            "object": "green bowl",
+            "start_location": "on the brown tabletop, to the right of the pink bowl",
+            "end_location": "on the brown tabletop, in the center-right area",
+            "remarks": ""
+          },
+          "sub_action_instruction": "Push the green bowl from on the brown tabletop, to the right of the pink bowl to on the brown tabletop, in the center-right area"
+        },
+        {
+          "start_frame": 27,
+          "end_frame": 33,
+          "validity": "",
+          "action": {
+            "verb": "Pick / Grasp",
+            "object": "blue bowl",
+            "start_location": "on the brown tabletop, to the right of the white toaster",
+            "end_location": "on the brown tabletop, to the right of the white toaster",
+            "remarks": ""
+          },
+          "sub_action_instruction": "Pick / Grasp the blue bowl at on the brown tabletop, to the right of the white toaster"
+        },
+        {
+          "start_frame": 34,
+          "end_frame": 37,
+          "validity": "",
+          "action": {
+            "verb": "Place",
+            "object": "blue bowl",
+            "start_location": "on the brown tabletop, to the right of the white toaster",
+            "end_location": "on top of the green bowl",
+            "remarks": ""
+          },
+          "sub_action_instruction": "Place the blue bowl from on the brown tabletop, to the right of the white toaster to on top of the green bowl"
+        }
+      ]
+    },
+    "parsed_segments": [
+      {
+        "start_frame": 10,
+        "end_frame": 22,
+        "step_description": "Push the green bowl with the right arm."
+      },
+      {
+        "start_frame": 27,
+        "end_frame": 33,
+        "step_description": "Pick the blue bowl with the left arm."
+      },
+      {
+        "start_frame": 34,
+        "end_frame": 37,
+        "step_description": "Place the blue bowl on the green bowl."
+      }
+    ],
+    "raw_responses": {
+      "segmentation": "```json\n{\n  \"task_summary\": \"Stack the blue bowl on the green bowl using two robotic arms.\",\n  \"steps\": [\n    {\n      \"step_description\": \"Push the green bowl with the right arm.\",\n      \"start_frame\": 10,\n      \"end_frame\": 22\n    },\n    {\n      \"step_description\": \"Pick the blue bowl with the left arm.\",\n      \"start_frame\": 27,\n      \"end_frame\": 33\n    },\n    {\n      \"step_description\": \"Place the blue bowl on the green bowl.\",\n      \"start_frame\": 34,\n      \"end_frame\": 37\n    }\n  ]\n}\n```",
+      "detailed_analysis": "```json\n{\n  \"segments_of_sub_actions\": [\n    {\n      \"start_frame\": 10,\n      \"end_frame\": 22,\n      \"validity\": \"\",\n      \"action\": {\n        \"verb\": \"Push\",\n        \"object\": \"green bowl\",\n        \"start_location\": \"on the brown tabletop, to the right of the pink bowl\",\n        \"end_location\": \"on the brown tabletop, in the center-right area\",\n        \"remarks\": \"\"\n      },\n      \"sub_action_instruction\": \"Push the green bowl from on the brown tabletop, to the right of the pink bowl to on the brown tabletop, in the center-right area\"\n    },\n    {\n      \"start_frame\": 27,\n      \"end_frame\": 33,\n      \"validity\": \"\",\n      \"action\": {\n        \"verb\": \"Pick / Grasp\",\n        \"object\": \"blue bowl\",\n        \"start_location\": \"on the brown tabletop, to the right of the white toaster\",\n        \"end_location\": \"on the brown tabletop, to the right of the white toaster\",\n        \"remarks\": \"\"\n      },\n      \"sub_action_instruction\": \"Pick / Grasp the blue bowl at on the brown tabletop, to the right of the white toaster\"\n    },\n    {\n      \"start_frame\": 34,\n      \"end_frame\": 37,\n      \"validity\": \"\",\n      \"action\": {\n        \"verb\": \"Place\",\n        \"object\": \"blue bowl\",\n        \"start_location\": \"on the brown tabletop, to the right of the white toaster\",\n        \"end_location\": \"on top of the green bowl\",\n        \"remarks\": \"\"\n      },\n      \"sub_action_instruction\": \"Place the blue bowl from on the brown tabletop, to the right of the white toaster to on top of the green bowl\"\n    }\n  ]\n}\n```"
+    }
+  },
+  {
+    "id": "../demo_frames_mine\\ur_03_flip_the_cup_upright_observation.rgb_images.camera_top_episode_000000.mp4_sampled_rank0",
+    "episode_name": "ur_03_flip_the_cup_upright_observation.rgb_images.camera_top_episode_000000.mp4_sampled_rank0",
+    "task_summary": "A robotic arm picks up a cup, flips it upright and places it on the table, after which a second arm picks up the cup.",
+    "segmentation": {
+      "task_summary": "A robotic arm picks up a cup, flips it upright and places it on the table, after which a second arm picks up the cup.",
+      "steps": [
+        {
+          "step_description": "Pick the cup with the right arm.",
+          "start_frame": 7,
+          "end_frame": 11
+        },
+        {
+          "step_description": "Flip the cup.",
+          "start_frame": 12,
+          "end_frame": 28
+        },
+        {
+          "step_description": "Place the cup on the table.",
+          "start_frame": 29,
+          "end_frame": 32
+        },
+        {
+          "step_description": "Pick the cup with the left arm.",
+          "start_frame": 36,
+          "end_frame": 55
+        }
+      ]
+    },
+    "detailed_analysis": {
+      "segments_of_sub_actions": [
+        {
+          "start_frame": 7,
+          "end_frame": 11,
+          "validity": "",
+          "action": {
+            "verb": "Pick / Grasp",
+            "object": "white cup",
+            "start_location": "on the gridded surface, next to the orange bucket",
+            "end_location": "on the gridded surface, next to the orange bucket",
+            "remarks": ""
+          },
+          "sub_action_instruction": "Pick / Grasp the white cup at on the gridded surface, next to the orange bucket"
+        },
+        {
+          "start_frame": 12,
+          "end_frame": 28,
+          "validity": "",
+          "action": {
+            "verb": "Flip",
+            "object": "white cup",
+            "start_location": "above the gridded surface on the right side",
+            "end_location": "above the gridded surface on the right side",
+            "remarks": ""
+          },
+          "sub_action_instruction": "Flip the white cup at above the gridded surface on the right side"
+        },
+        {
+          "start_frame": 29,
+          "end_frame": 32,
+          "validity": "",
+          "action": {
+            "verb": "Place",
+            "object": "white cup",
+            "start_location": "above the gridded surface on the right side",
+            "end_location": "on the center of the gridded surface",
+            "remarks": ""
+          },
+          "sub_action_instruction": "Place the white cup from above the gridded surface on the right side to on the center of the gridded surface"
+        },
+        {
+          "start_frame": 36,
+          "end_frame": 55,
+          "validity": "",
+          "action": {
+            "verb": "Pick / Grasp",
+            "object": "white cup",
+            "start_location": "on the center of the gridded surface",
+            "end_location": "on the center of the gridded surface",
+            "remarks": ""
+          },
+          "sub_action_instruction": "Pick / Grasp the white cup at on the center of the gridded surface"
+        }
+      ]
+    },
+    "parsed_segments": [
+      {
+        "start_frame": 7,
+        "end_frame": 11,
+        "step_description": "Pick the cup with the right arm."
+      },
+      {
+        "start_frame": 12,
+        "end_frame": 28,
+        "step_description": "Flip the cup."
+      },
+      {
+        "start_frame": 29,
+        "end_frame": 32,
+        "step_description": "Place the cup on the table."
+      },
+      {
+        "start_frame": 36,
+        "end_frame": 55,
+        "step_description": "Pick the cup with the left arm."
+      }
+    ],
+    "raw_responses": {
+      "segmentation": "```json\n{\n  \"task_summary\": \"A robotic arm picks up a cup, flips it upright and places it on the table, after which a second arm picks up the cup.\",\n  \"steps\": [\n    {\n      \"step_description\": \"Pick the cup with the right arm.\",\n      \"start_frame\": 7,\n      \"end_frame\": 11\n    },\n    {\n      \"step_description\": \"Flip the cup.\",\n      \"start_frame\": 12,\n      \"end_frame\": 28\n    },\n    {\n      \"step_description\": \"Place the cup on the table.\",\n      \"start_frame\": 29,\n      \"end_frame\": 32\n    },\n    {\n      \"step_description\": \"Pick the cup with the left arm.\",\n      \"start_frame\": 36,\n      \"end_frame\": 55\n    }\n  ]\n}\n```",
+      "detailed_analysis": "```json\n{\n  \"segments_of_sub_actions\": [\n    {\n      \"start_frame\": 7,\n      \"end_frame\": 11,\n      \"validity\": \"\",\n      \"action\": {\n        \"verb\": \"Pick / Grasp\",\n        \"object\": \"white cup\",\n        \"start_location\": \"on the gridded surface, next to the orange bucket\",\n        \"end_location\": \"on the gridded surface, next to the orange bucket\",\n        \"remarks\": \"\"\n      },\n      \"sub_action_instruction\": \"Pick / Grasp the white cup at on the gridded surface, next to the orange bucket\"\n    },\n    {\n      \"start_frame\": 12,\n      \"end_frame\": 28,\n      \"validity\": \"\",\n      \"action\": {\n        \"verb\": \"Flip\",\n        \"object\": \"white cup\",\n        \"start_location\": \"above the gridded surface on the right side\",\n        \"end_location\": \"above the gridded surface on the right side\",\n        \"remarks\": \"\"\n      },\n      \"sub_action_instruction\": \"Flip the white cup at above the gridded surface on the right side\"\n    },\n    {\n      \"start_frame\": 29,\n      \"end_frame\": 32,\n      \"validity\": \"\",\n      \"action\": {\n        \"verb\": \"Place\",\n        \"object\": \"white cup\",\n        \"start_location\": \"above the gridded surface on the right side\",\n        \"end_location\": \"on the center of the gridded surface\",\n        \"remarks\": \"\"\n      },\n      \"sub_action_instruction\": \"Place the white cup from above the gridded surface on the right side to on the center of the gridded surface\"\n    },\n    {\n      \"start_frame\": 36,\n      \"end_frame\": 55,\n      \"validity\": \"\",\n      \"action\": {\n        \"verb\": \"Pick / Grasp\",\n        \"object\": \"white cup\",\n        \"start_location\": \"on the center of the gridded surface\",\n        \"end_location\": \"on the center of the gridded surface\",\n        \"remarks\": \"\"\n      },\n      \"sub_action_instruction\": \"Pick / Grasp the white cup at on the center of the gridded surface\"\n    }\n  ]\n}\n```"
+    }
+  },
+  {
+    "id": "../demo_frames_mine\\ur_03_get_the_cubes_in_line_observation.rgb_images.camera_top_episode_000000.mp4_sampled_rank0",
+    "episode_name": "ur_03_get_the_cubes_in_line_observation.rgb_images.camera_top_episode_000000.mp4_sampled_rank0",
+    "task_summary": "Stacking and arranging colored cubes using two robotic arms.",
+    "segmentation": {
+      "task_summary": "Stacking and arranging colored cubes using two robotic arms.",
+      "steps": [
+        {
+          "step_description": "Place the orange cube on the grid.",
+          "start_frame": 0,
+          "end_frame": 33
+        },
+        {
+          "step_description": "Place the purple cube on top of the orange cube.",
+          "start_frame": 34,
+          "end_frame": 70
+        }
+      ]
+    },
+    "detailed_analysis": {
+      "segments_of_sub_actions": [
+        {
+          "start_frame": 0,
+          "end_frame": 33,
+          "validity": "",
+          "action": {
+            "verb": "Place",
+            "object": "orange cube",
+            "start_location": "held by the right robot gripper above the cardboard grid",
+            "end_location": "the grid square at row 2, column 4",
+            "remarks": ""
+          },
+          "sub_action_instruction": "Place the orange cube from held by the right robot gripper above the cardboard grid to the grid square at row 2, column 4"
+        },
+        {
+          "start_frame": 34,
+          "end_frame": 70,
+          "validity": "",
+          "action": {
+            "verb": "Place",
+            "object": "purple cube",
+            "start_location": "held by the left robot gripper above the grid square at row 2, column 2",
+            "end_location": "on top of the orange cube at grid square (row 2, column 4)",
+            "remarks": ""
+          },
+          "sub_action_instruction": "Place the purple cube from held by the left robot gripper above the grid square at row 2, column 2 to on top of the orange cube at grid square (row 2, column 4)"
+        }
+      ]
+    },
+    "parsed_segments": [
+      {
+        "start_frame": 0,
+        "end_frame": 33,
+        "step_description": "Place the orange cube on the grid."
+      },
+      {
+        "start_frame": 34,
+        "end_frame": 70,
+        "step_description": "Place the purple cube on top of the orange cube."
+      }
+    ],
+    "raw_responses": {
+      "segmentation": "```json\n{\n  \"task_summary\": \"Stacking and arranging colored cubes using two robotic arms.\",\n  \"steps\": [\n    {\n      \"step_description\": \"Place the orange cube on the grid.\",\n      \"start_frame\": 0,\n      \"end_frame\": 33\n    },\n    {\n      \"step_description\": \"Place the purple cube on top of the orange cube.\",\n      \"start_frame\": 34,\n      \"end_frame\": 70\n    }\n  ]\n}\n```",
+      "detailed_analysis": "```json\n{\n  \"segments_of_sub_actions\": [\n    {\n      \"start_frame\": 0,\n      \"end_frame\": 33,\n      \"validity\": \"\",\n      \"action\": {\n        \"verb\": \"Place\",\n        \"object\": \"orange cube\",\n        \"start_location\": \"held by the right robot gripper above the cardboard grid\",\n        \"end_location\": \"the grid square at row 2, column 4\",\n        \"remarks\": \"\"\n      },\n      \"sub_action_instruction\": \"Place the orange cube from held by the right robot gripper above the cardboard grid to the grid square at row 2, column 4\"\n    },\n    {\n      \"start_frame\": 34,\n      \"end_frame\": 70,\n      \"validity\": \"\",\n      \"action\": {\n        \"verb\": \"Place\",\n        \"object\": \"purple cube\",\n        \"start_location\": \"held by the left robot gripper above the grid square at row 2, column 2\",\n        \"end_location\": \"on top of the orange cube at grid square (row 2, column 4)\",\n        \"remarks\": \"\"\n      },\n      \"sub_action_instruction\": \"Place the purple cube from held by the left robot gripper above the grid square at row 2, column 2 to on top of the orange cube at grid square (row 2, column 4)\"\n    }\n  ]\n}\n```"
+    }
+  },
+  {
+    "id": "../demo_frames_mine\\ur_03_lay_out_the_fork_250511_observation.rgb_images.camera_top_episode_000000.mp4_sampled_rank0",
+    "episode_name": "ur_03_lay_out_the_fork_250511_observation.rgb_images.camera_top_episode_000000.mp4_sampled_rank0",
+    "task_summary": "A dual-arm robot sets a table by placing a plate onto a tray with the left arm and then placing a fork next to the plate with the right arm.",
+    "segmentation": {
+      "task_summary": "A dual-arm robot sets a table by placing a plate onto a tray with the left arm and then placing a fork next to the plate with the right arm.",
+      "steps": [
+        {
+          "step_description": "Pick the plate with the left arm.",
+          "start_frame": 8,
+          "end_frame": 13
+        },
+        {
+          "step_description": "Place the plate on the green tray with the left arm.",
+          "start_frame": 14,
+          "end_frame": 22
+        },
+        {
+          "step_description": "Pick the fork with the right arm.",
+          "start_frame": 27,
+          "end_frame": 35
+        },
+        {
+          "step_description": "Place the fork on the right side of the plate with the right arm.",
+          "start_frame": 36,
+          "end_frame": 44
+        }
+      ]
+    },
+    "detailed_analysis": {
+      "segments_of_sub_actions": [
+        {
+          "start_frame": 8,
+          "end_frame": 13,
+          "validity": "",
+          "action": {
+            "verb": "Pick / Grasp",
+            "object": "white plate",
+            "start_location": "the gridded brown surface to the left of the green tray",
+            "end_location": "the gridded brown surface to the left of the green tray",
+            "remarks": ""
+          },
+          "sub_action_instruction": "Pick / Grasp the white plate at the gridded brown surface to the left of the green tray"
+        },
+        {
+          "start_frame": 14,
+          "end_frame": 22,
+          "validity": "",
+          "action": {
+            "verb": "Place",
+            "object": "white plate",
+            "start_location": "the gridded brown surface to the left of the green tray",
+            "end_location": "the center of the green tray",
+            "remarks": ""
+          },
+          "sub_action_instruction": "Place the white plate from the gridded brown surface to the left of the green tray to the center of the green tray"
+        },
+        {
+          "start_frame": 27,
+          "end_frame": 35,
+          "validity": "",
+          "action": {
+            "verb": "Pick / Grasp",
+            "object": "yellow fork",
+            "start_location": "inside the white plate on the green tray",
+            "end_location": "inside the white plate on the green tray",
+            "remarks": ""
+          },
+          "sub_action_instruction": "Pick / Grasp the yellow fork at inside the white plate on the green tray"
+        },
+        {
+          "start_frame": 36,
+          "end_frame": 44,
+          "validity": "",
+          "action": {
+            "verb": "Place",
+            "object": "yellow fork",
+            "start_location": "inside the white plate on the green tray",
+            "end_location": "the right side of the white plate on the green tray",
+            "remarks": ""
+          },
+          "sub_action_instruction": "Place the yellow fork from inside the white plate on the green tray to the right side of the white plate on the green tray"
+        }
+      ]
+    },
+    "parsed_segments": [
+      {
+        "start_frame": 8,
+        "end_frame": 13,
+        "step_description": "Pick the plate with the left arm."
+      },
+      {
+        "start_frame": 14,
+        "end_frame": 22,
+        "step_description": "Place the plate on the green tray with the left arm."
+      },
+      {
+        "start_frame": 27,
+        "end_frame": 35,
+        "step_description": "Pick the fork with the right arm."
+      },
+      {
+        "start_frame": 36,
+        "end_frame": 44,
+        "step_description": "Place the fork on the right side of the plate with the right arm."
+      }
+    ],
+    "raw_responses": {
+      "segmentation": "```json\n{\n  \"task_summary\": \"A dual-arm robot sets a table by placing a plate onto a tray with the left arm and then placing a fork next to the plate with the right arm.\",\n  \"steps\": [\n    {\n      \"step_description\": \"Pick the plate with the left arm.\",\n      \"start_frame\": 8,\n      \"end_frame\": 13\n    },\n    {\n      \"step_description\": \"Place the plate on the green tray with the left arm.\",\n      \"start_frame\": 14,\n      \"end_frame\": 22\n    },\n    {\n      \"step_description\": \"Pick the fork with the right arm.\",\n      \"start_frame\": 27,\n      \"end_frame\": 35\n    },\n    {\n      \"step_description\": \"Place the fork on the right side of the plate with the right arm.\",\n      \"start_frame\": 36,\n      \"end_frame\": 44\n    }\n  ]\n}\n```",
+      "detailed_analysis": "```json\n{\n  \"segments_of_sub_actions\": [\n    {\n      \"start_frame\": 8,\n      \"end_frame\": 13,\n      \"validity\": \"\",\n      \"action\": {\n        \"verb\": \"Pick / Grasp\",\n        \"object\": \"white plate\",\n        \"start_location\": \"the gridded brown surface to the left of the green tray\",\n        \"end_location\": \"the gridded brown surface to the left of the green tray\",\n        \"remarks\": \"\"\n      },\n      \"sub_action_instruction\": \"Pick / Grasp the white plate at the gridded brown surface to the left of the green tray\"\n    },\n    {\n      \"start_frame\": 14,\n      \"end_frame\": 22,\n      \"validity\": \"\",\n      \"action\": {\n        \"verb\": \"Place\",\n        \"object\": \"white plate\",\n        \"start_location\": \"the gridded brown surface to the left of the green tray\",\n        \"end_location\": \"the center of the green tray\",\n        \"remarks\": \"\"\n      },\n      \"sub_action_instruction\": \"Place the white plate from the gridded brown surface to the left of the green tray to the center of the green tray\"\n    },\n    {\n      \"start_frame\": 27,\n      \"end_frame\": 35,\n      \"validity\": \"\",\n      \"action\": {\n        \"verb\": \"Pick / Grasp\",\n        \"object\": \"yellow fork\",\n        \"start_location\": \"inside the white plate on the green tray\",\n        \"end_location\": \"inside the white plate on the green tray\",\n        \"remarks\": \"\"\n      },\n      \"sub_action_instruction\": \"Pick / Grasp the yellow fork at inside the white plate on the green tray\"\n    },\n    {\n      \"start_frame\": 36,\n      \"end_frame\": 44,\n      \"validity\": \"\",\n      \"action\": {\n        \"verb\": \"Place\",\n        \"object\": \"yellow fork\",\n        \"start_location\": \"inside the white plate on the green tray\",\n        \"end_location\": \"the right side of the white plate on the green tray\",\n        \"remarks\": \"\"\n      },\n      \"sub_action_instruction\": \"Place the yellow fork from inside the white plate on the green tray to the right side of the white plate on the green tray\"\n    }\n  ]\n}\n```"
+    }
+  },
+  {
+    "id": "../demo_frames_mine\\ur_03_stack_the_blue_cube_observation.rgb_images.camera_top_episode_000000.mp4_sampled_rank0",
+    "episode_name": "ur_03_stack_the_blue_cube_observation.rgb_images.camera_top_episode_000000.mp4_sampled_rank0",
+    "task_summary": "Using two robotic arms, pick up two separate blue cubes and stack them on top of each other.",
+    "segmentation": {
+      "task_summary": "Using two robotic arms, pick up two separate blue cubes and stack them on top of each other.",
+      "steps": [
+        {
+          "step_description": "Pick the blue cube with the right arm.",
+          "start_frame": 0,
+          "end_frame": 18
+        },
+        {
+          "step_description": "Pick the other blue cube with the left arm.",
+          "start_frame": 19,
+          "end_frame": 24
+        },
+        {
+          "step_description": "Place the blue cube from the right arm on top of the blue cube held by the left arm.",
+          "start_frame": 25,
+          "end_frame": 37
+        }
+      ]
+    },
+    "detailed_analysis": {
+      "segments_of_sub_actions": [
+        {
+          "start_frame": 0,
+          "end_frame": 18,
+          "validity": "",
+          "action": {
+            "verb": "Pick / Grasp",
+            "object": "light blue cube",
+            "start_location": "the gridded surface, in the second row from the top and third column from the left",
+            "end_location": "the gridded surface, in the second row from the top and third column from the left",
+            "remarks": ""
+          },
+          "sub_action_instruction": "Pick / Grasp the light blue cube at the gridded surface, in the second row from the top and third column from the left"
+        },
+        {
+          "start_frame": 19,
+          "end_frame": 24,
+          "validity": "",
+          "action": {
+            "verb": "Pick / Grasp",
+            "object": "light blue cube",
+            "start_location": "the gridded surface, in the second row from the top and second column from the left",
+            "end_location": "the gridded surface, in the second row from the top and second column from the left",
+            "remarks": ""
+          },
+          "sub_action_instruction": "Pick / Grasp the light blue cube at the gridded surface, in the second row from the top and second column from the left"
+        },
+        {
+          "start_frame": 25,
+          "end_frame": 37,
+          "validity": "",
+          "action": {
+            "verb": "Place",
+            "object": "light blue cube held by the right robot arm",
+            "start_location": "the gripper of the right robot arm",
+            "end_location": "on top of the other light blue cube held by the left robot arm",
+            "remarks": ""
+          },
+          "sub_action_instruction": "Place the light blue cube held by the right robot arm from the gripper of the right robot arm to on top of the other light blue cube held by the left robot arm"
+        }
+      ]
+    },
+    "parsed_segments": [
+      {
+        "start_frame": 0,
+        "end_frame": 18,
+        "step_description": "Pick the blue cube with the right arm."
+      },
+      {
+        "start_frame": 19,
+        "end_frame": 24,
+        "step_description": "Pick the other blue cube with the left arm."
+      },
+      {
+        "start_frame": 25,
+        "end_frame": 37,
+        "step_description": "Place the blue cube from the right arm on top of the blue cube held by the left arm."
+      }
+    ],
+    "raw_responses": {
+      "segmentation": "```json\n{\n  \"task_summary\": \"Using two robotic arms, pick up two separate blue cubes and stack them on top of each other.\",\n  \"steps\": [\n    {\n      \"step_description\": \"Pick the blue cube with the right arm.\",\n      \"start_frame\": 0,\n      \"end_frame\": 18\n    },\n    {\n      \"step_description\": \"Pick the other blue cube with the left arm.\",\n      \"start_frame\": 19,\n      \"end_frame\": 24\n    },\n    {\n      \"step_description\": \"Place the blue cube from the right arm on top of the blue cube held by the left arm.\",\n      \"start_frame\": 25,\n      \"end_frame\": 37\n    }\n  ]\n}\n```",
+      "detailed_analysis": "```json\n{\n  \"segments_of_sub_actions\": [\n    {\n      \"start_frame\": 0,\n      \"end_frame\": 18,\n      \"validity\": \"\",\n      \"action\": {\n        \"verb\": \"Pick / Grasp\",\n        \"object\": \"light blue cube\",\n        \"start_location\": \"the gridded surface, in the second row from the top and third column from the left\",\n        \"end_location\": \"the gridded surface, in the second row from the top and third column from the left\",\n        \"remarks\": \"\"\n      },\n      \"sub_action_instruction\": \"Pick / Grasp the light blue cube at the gridded surface, in the second row from the top and third column from the left\"\n    },\n    {\n      \"start_frame\": 19,\n      \"end_frame\": 24,\n      \"validity\": \"\",\n      \"action\": {\n        \"verb\": \"Pick / Grasp\",\n        \"object\": \"light blue cube\",\n        \"start_location\": \"the gridded surface, in the second row from the top and second column from the left\",\n        \"end_location\": \"the gridded surface, in the second row from the top and second column from the left\",\n        \"remarks\": \"\"\n      },\n      \"sub_action_instruction\": \"Pick / Grasp the light blue cube at the gridded surface, in the second row from the top and second column from the left\"\n    },\n    {\n      \"start_frame\": 25,\n      \"end_frame\": 37,\n      \"validity\": \"\",\n      \"action\": {\n        \"verb\": \"Place\",\n        \"object\": \"light blue cube held by the right robot arm\",\n        \"start_location\": \"the gripper of the right robot arm\",\n        \"end_location\": \"on top of the other light blue cube held by the left robot arm\",\n        \"remarks\": \"\"\n      },\n      \"sub_action_instruction\": \"Place the light blue cube held by the right robot arm from the gripper of the right robot arm to on top of the other light blue cube held by the left robot arm\"\n    }\n  ]\n}\n```"
+    }
+  }
+]

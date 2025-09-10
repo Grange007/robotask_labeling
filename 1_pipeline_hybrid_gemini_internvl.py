@@ -6,28 +6,20 @@ import json
 import re
 import asyncio
 import time
+import os
 from prompt_manager import create_prompt_manager, get_available_versions
 
-# InternVL2.5 相关导入（可选）
-try:
-    from lmdeploy import pipeline, TurbomindEngineConfig, ChatTemplateConfig, GenerationConfig
-    from lmdeploy.vl import load_image
-    from lmdeploy.vl.constants import IMAGE_TOKEN
-    from lmdeploy.vl.utils import encode_image_base64
-    from PIL import Image
-    import torch
-    import gc
-    INTERNVL_AVAILABLE = True
-except ImportError:
-    INTERNVL_AVAILABLE = False
-    print("Warning: InternVL dependencies not available. Only Gemini mode will work.")
+# InternVL2.5 相关导入
+from lmdeploy import pipeline, TurbomindEngineConfig, ChatTemplateConfig, GenerationConfig
+from lmdeploy.vl import load_image
+from lmdeploy.vl.constants import IMAGE_TOKEN
+from lmdeploy.vl.utils import encode_image_base64
+from PIL import Image
+import torch
+import gc
 
-# InternVL2.5 辅助函数
 def find_closest_aspect_ratio(aspect_ratio, target_ratios, width, height, image_size):
-    """找到最接近的宽高比"""
-    if not INTERNVL_AVAILABLE:
-        return (1, 1)
-    
+    """InternVL2.5 图像预处理：找到最接近的宽高比"""
     best_ratio_diff = float('inf')
     best_ratio = (1, 1)
     area = width * height
@@ -42,46 +34,113 @@ def find_closest_aspect_ratio(aspect_ratio, target_ratios, width, height, image_
                 best_ratio = ratio
     return best_ratio
 
-def resize_img_internvl(image, min_num=1, max_num=6, image_size=448):
-    """InternVL2.5 图像预处理"""
-    if not INTERNVL_AVAILABLE:
-        return image
-    
+def resize_img(image, min_num=1, max_num=6, image_size=448):
+    """InternVL2.5 图像预处理：调整图像大小"""
     orig_width, orig_height = image.size
     aspect_ratio = orig_width / orig_height
 
+    # calculate the existing image aspect ratio
     target_ratios = set((i, j) for n in range(min_num, max_num + 1) for i in range(1, n + 1) for j in range(1, n + 1)
                         if i * j <= max_num and i * j >= min_num)
     target_ratios = sorted(target_ratios, key=lambda x: x[0] * x[1])
 
+    # find the closest aspect ratio to the target
     target_aspect_ratio = find_closest_aspect_ratio(aspect_ratio, target_ratios, orig_width, orig_height, image_size)
+
+    # calculate the target width and height
     target_width = image_size * target_aspect_ratio[0]
     target_height = image_size * target_aspect_ratio[1]
+    blocks = target_aspect_ratio[0] * target_aspect_ratio[1]
+
+    # resize the image
     resized_img = image.resize((target_width, target_height))
     return resized_img
 
 def load_internvl_model(model_path):
     """加载InternVL2.5模型"""
-    if not INTERNVL_AVAILABLE:
-        raise ImportError("InternVL dependencies not available")
-    
     print(f"Loading InternVL2.5 model from: {model_path}")
     pipe = pipeline(
         model_path, 
         backend_config=TurbomindEngineConfig(
-            session_len=32768,
-            tp=1,
+            session_len=32768,  # 支持长序列
+            tp=1,  # 单GPU推理，可根据需要调整
         ), 
         chat_template_config=ChatTemplateConfig(model_name='internvl2_5')
     )
     return pipe
 
+def format_segmentation_message_universal(path_to_frames, prompt_manager, embodiment=None, desc=None, **kwargs):
+    """第一阶段：使用Gemini的消息格式化"""
+    images = os.listdir(path_to_frames)
+    images = sorted(images, key=lambda x: int(x[x.index('_')+1:x.index('.png')]))
+    images = [os.path.join(path_to_frames, img) for img in images]
+    
+    if not desc:
+        desc = ""
+    
+    prompt = prompt_manager.format_segmentation_prompt(desc)
+    message = {
+        "request_id": f"{path_to_frames}_segmentation", 
+        "prompt": prompt, 
+        "image_base64": [image_to_frame(img) for img in images]
+    } 
+    return message
+
+def format_detailed_analysis_message_internvl(path_to_frames, segments, prompt_manager, task_summary="", embodiment=None, desc=None, include_step_descriptions=True, **kwargs):
+    """第二阶段：使用InternVL2.5的消息格式化"""
+    images = os.listdir(path_to_frames)
+    images = sorted(images, key=lambda x: int(x[x.index('_')+1:x.index('.png')]))
+    images = [os.path.join(path_to_frames, img) for img in images]
+    
+    if not desc:
+        desc = ""
+    
+    # 获取基础prompt
+    base_prompt = prompt_manager.get_detailed_prompt()
+    
+    # 根据参数决定是否包含step descriptions
+    if include_step_descriptions:
+        # 获取格式化的上下文（包含step descriptions）
+        context = prompt_manager.format_detailed_prompt_context(segments, task_summary, desc)
+    else:
+        # 只传递task_summary，不传递segments的step descriptions
+        filtered_segments = []
+        for segment in segments:
+            filtered_segment = {
+                'start_frame': segment.get('start_frame'),
+                'end_frame': segment.get('end_frame')
+            }
+            filtered_segments.append(filtered_segment)
+        context = prompt_manager.format_detailed_prompt_context(filtered_segments, task_summary, desc)
+    
+    # 组合完整prompt
+    full_prompt = f"{base_prompt}{context}"
+    
+    # 构建InternVL2.5格式的prompt
+    prompt = ""
+    for img_idx in range(len(images)):
+        prompt += f'Frame{img_idx + 1}: {IMAGE_TOKEN}\n'
+    
+    prompt += full_prompt
+    
+    # 预处理图像
+    processed_images = []
+    for img_path in images:
+        img = Image.open(img_path).convert('RGB')
+        img = resize_img(img)
+        img = img.resize((480, 480))  # 统一调整到480x480
+        processed_images.append(img)
+    
+    return {
+        "prompt": prompt,
+        "images": processed_images,
+        "request_id": f"{path_to_frames}_detailed_internvl"
+    }
+
 async def request_internvl_model(message_data, internvl_pipe, generation_config):
     """使用InternVL2.5进行推理"""
-    if not INTERNVL_AVAILABLE:
-        raise ImportError("InternVL dependencies not available")
-        
     try:
+        # 准备输入数据
         prompt = message_data["prompt"]
         images = message_data["images"]
         
@@ -121,93 +180,18 @@ async def request_internvl_model(message_data, internvl_pipe, generation_config)
             'error': str(e)
         }
 
-def format_segmentation_message_universal(path_to_frames, prompt_manager, embodiment=None, desc=None, **kwargs):
-    """通用的第一阶段消息格式化"""
-    images = os.listdir(path_to_frames)
-    images = sorted(images, key=lambda x: int(x[x.index('_')+1:x.index('.png')]))
-    images = [os.path.join(path_to_frames, img) for img in images]
+async def process_hybrid_two_stage_pipeline(frame_paths, desc, embodiment, prompt_version="v1", result_file=None, seg_result_file=None, include_step_descriptions=True, internvl_model_path=None):
+    """混合两阶段处理管道：Stage1用Gemini，Stage2用InternVL2.5"""
     
-    if not desc:
-        desc = ""
-    
-    prompt = prompt_manager.format_segmentation_prompt(desc)
-    message = {
-        "request_id": f"{path_to_frames}_segmentation", 
-        "prompt": prompt, 
-        "image_base64": [image_to_frame(img) for img in images]
-    } 
-    return message
-
-def format_detailed_analysis_message_universal(path_to_frames, segments, prompt_manager, task_summary="", embodiment=None, desc=None, include_step_descriptions=True, stage2_model="gemini", **kwargs):
-    """通用的第二阶段消息格式化"""
-    images = os.listdir(path_to_frames)
-    images = sorted(images, key=lambda x: int(x[x.index('_')+1:x.index('.png')]))
-    images = [os.path.join(path_to_frames, img) for img in images]
-    
-    if not desc:
-        desc = ""
-    
-    # 获取基础prompt
-    base_prompt = prompt_manager.get_detailed_prompt()
-    
-    # 根据参数决定是否包含step descriptions
-    if include_step_descriptions:
-        # 获取格式化的上下文（包含step descriptions）
-        context = prompt_manager.format_detailed_prompt_context(segments, task_summary, desc)
-    else:
-        # 只传递task_summary，不传递segments的step descriptions
-        filtered_segments = []
-        for segment in segments:
-            filtered_segment = {
-                'start_frame': segment.get('start_frame'),
-                'end_frame': segment.get('end_frame')
-            }
-            filtered_segments.append(filtered_segment)
-        context = prompt_manager.format_detailed_prompt_context(filtered_segments, task_summary, desc)
-    
-    # 组合完整prompt
-    full_prompt = f"{base_prompt}{context}"
-    
-    if stage2_model == "internvl" and INTERNVL_AVAILABLE:
-        # InternVL2.5 格式
-        prompt = ""
-        for img_idx in range(len(images)):
-            prompt += f'Frame{img_idx + 1}: {IMAGE_TOKEN}\n'
-        prompt += full_prompt
-        
-        # 预处理图像
-        processed_images = []
-        for img_path in images:
-            img = Image.open(img_path).convert('RGB')
-            img = resize_img_internvl(img)
-            img = img.resize((480, 480))
-            processed_images.append(img)
-        
-        return {
-            "prompt": prompt,
-            "images": processed_images,
-            "request_id": f"{path_to_frames}_detailed_internvl"
-        }
-    else:
-        # Gemini 格式 (默认)
-        message = {
-            "request_id": f"{path_to_frames}_detailed", 
-            "prompt": full_prompt, 
-            "image_base64": [image_to_frame(img) for img in images]
-        } 
-        return message
-
-async def process_universal_two_stage_pipeline(frame_paths, desc, embodiment, prompt_version="v1", result_file=None, seg_result_file=None, include_step_descriptions=True, stage2_model="gemini", internvl_model_path=None):
-    """通用的两阶段处理管道"""
     # 记录总体开始时间
     total_start_time = time.time()
     
     prompt_manager = create_prompt_manager(prompt_version)
     version_info = prompt_manager.get_version_info()
     
-    print(f"=== Two-Stage Pipeline Configuration ===")
+    print(f"=== Hybrid Pipeline Configuration ===")
     print(f"Stage 1: Gemini (Segmentation)")
-    print(f"Stage 2: {stage2_model.upper()} (Detailed Analysis)")
+    print(f"Stage 2: InternVL2.5 (Detailed Analysis)")
     print(f"Using prompt version: {version_info['version']}")
     print(f"Output format: {version_info['output_format']}")
     print(f"Has task summary: {version_info['has_task_summary']}")
@@ -215,19 +199,13 @@ async def process_universal_two_stage_pipeline(frame_paths, desc, embodiment, pr
     print(f"Include step descriptions in stage 2: {include_step_descriptions}")
     print()
     
-    # 如果使用InternVL，加载模型
-    internvl_pipe = None
-    generation_config = None
-    if stage2_model == "internvl":
-        if not INTERNVL_AVAILABLE:
-            raise ImportError("InternVL dependencies not available. Please install lmdeploy and related packages.")
-        
-        if not internvl_model_path:
-            internvl_model_path = "/media/users/wd/hf/hf_models/InternVL3-78B"
-            print(f"Warning: Using default InternVL model path: {internvl_model_path}")
-        
-        internvl_pipe = load_internvl_model(internvl_model_path)
-        generation_config = GenerationConfig(max_new_tokens=512, min_new_tokens=2)
+    # 加载InternVL2.5模型
+    if not internvl_model_path:
+        internvl_model_path = "/media/users/wd/hf/hf_models/InternVL3-78B"  # 默认路径
+        print(f"Warning: Using default InternVL model path: {internvl_model_path}")
+    
+    internvl_pipe = load_internvl_model(internvl_model_path)
+    generation_config = GenerationConfig(max_new_tokens=512, min_new_tokens=2)
     
     all_results = []
     seg_results_list = []  # 存储第一阶段结果
@@ -242,19 +220,11 @@ async def process_universal_two_stage_pipeline(frame_paths, desc, embodiment, pr
         episode_desc = desc.get(episode_name, {}).get('desc', '')
         
         try:
-            # 第一阶段：分割
+            # 第一阶段：使用Gemini进行分割
             stage1_start_time = time.time()
-            print("Stage 1: Segmentation...")
+            print("Stage 1: Segmentation (Gemini)...")
             seg_message = format_segmentation_message_universal(frame_path, prompt_manager, embodiment, episode_desc)
-
-            # prompt_store_path = os.path.join(os.path.pardir(result_file), f"{episode_name}_prompt.txt")
-            # print(f"Storing prompt to {prompt_store_path}")
-            # print(f"Prompt:\n{seg_message['prompt']}\n")
-            # os.makedirs(os.path.dirname(prompt_store_path), exist_ok=True)
-            # with open(prompt_store_path, 'w', encoding='utf-8') as f:
-            #     f.write(seg_message['prompt'])
-
-            seg_results = await request_model([seg_message])
+            seg_results = await request_model([seg_message])  # 使用原有的Gemini API
             stage1_end_time = time.time()
             stage1_duration = stage1_end_time - stage1_start_time
             
@@ -281,24 +251,19 @@ async def process_universal_two_stage_pipeline(frame_paths, desc, embodiment, pr
                 'task_summary': task_summary,
                 'version_info': version_info
             }
-            seg_results_list.append(seg_result)            # 第二阶段：详细分析
-            stage2_start_time = time.time()
-            print(f"Stage 2: Detailed analysis ({stage2_model.upper()})...")
-            detail_message = format_detailed_analysis_message_universal(
-                frame_path, segments, prompt_manager, task_summary, embodiment, episode_desc, include_step_descriptions, stage2_model
-            )
-              # 根据模型类型选择推理方式
-            if stage2_model == "internvl":
-                detail_results = await request_internvl_model(detail_message, internvl_pipe, generation_config)
-                # 转换为统一格式
-                detail_results = [detail_results] if detail_results else None
-            else:
-                detail_results = await request_model([detail_message])
+            seg_results_list.append(seg_result)
             
+            # 第二阶段：使用InternVL2.5进行详细分析
+            stage2_start_time = time.time()
+            print("Stage 2: Detailed analysis (InternVL2.5)...")
+            detail_message = format_detailed_analysis_message_internvl(
+                frame_path, segments, prompt_manager, task_summary, embodiment, episode_desc, include_step_descriptions
+            )
+            detail_results = await request_internvl_model(detail_message, internvl_pipe, generation_config)
             stage2_end_time = time.time()
             stage2_duration = stage2_end_time - stage2_start_time
             
-            if detail_results and detail_results[0].get('response'):
+            if detail_results and detail_results.get('response'):
                 # 计算episode总时间
                 episode_end_time = time.time()
                 episode_duration = episode_end_time - episode_start_time
@@ -310,6 +275,8 @@ async def process_universal_two_stage_pipeline(frame_paths, desc, embodiment, pr
                     'stage1_duration': stage1_duration,
                     'stage2_duration': stage2_duration,
                     'total_episode_duration': episode_duration,
+                    'stage1_model': 'gemini',
+                    'stage2_model': 'internvl2.5',
                     'status': 'success',
                     'timestamp': time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(episode_start_time))
                 }
@@ -320,17 +287,21 @@ async def process_universal_two_stage_pipeline(frame_paths, desc, embodiment, pr
                     'id': frame_path,
                     'prompt_version': prompt_version,
                     'segmentation_response': seg_results[0]['response'],
-                    'detailed_response': detail_results[0]['response'],
+                    'detailed_response': detail_results['response'],
                     'segments': segments,
                     'task_summary': task_summary,
-                    'version_info': version_info
+                    'version_info': version_info,
+                    'model_info': {
+                        'stage1_model': 'gemini',
+                        'stage2_model': 'internvl2.5'
+                    }
                 }
                 all_results.append(result)
                 
                 # 打印时间统计
                 print(f"Successfully processed {frame_path}")
-                print(f"  Stage 1 (Segmentation): {stage1_duration:.2f}s")
-                print(f"  Stage 2 (Detailed analysis): {stage2_duration:.2f}s")
+                print(f"  Stage 1 (Gemini): {stage1_duration:.2f}s")
+                print(f"  Stage 2 (InternVL2.5): {stage2_duration:.2f}s")
                 print(f"  Total episode time: {episode_duration:.2f}s")
             else:
                 episode_end_time = time.time()
@@ -343,12 +314,15 @@ async def process_universal_two_stage_pipeline(frame_paths, desc, embodiment, pr
                     'stage1_duration': stage1_duration,
                     'stage2_duration': None,
                     'total_episode_duration': episode_duration,
+                    'stage1_model': 'gemini',
+                    'stage2_model': 'internvl2.5',
                     'status': 'failed_stage2',
-                    'timestamp': time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(episode_start_time))                }
+                    'timestamp': time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(episode_start_time))
+                }
                 time_records.append(time_record)
                 
                 print(f"Failed to get detailed analysis for {frame_path}")
-                print(f"  Stage 1 (Segmentation): {stage1_duration:.2f}s")
+                print(f"  Stage 1 (Gemini): {stage1_duration:.2f}s")
                 print(f"  Total episode time: {episode_duration:.2f}s")
                 
         except Exception as e:
@@ -362,6 +336,8 @@ async def process_universal_two_stage_pipeline(frame_paths, desc, embodiment, pr
                 'stage1_duration': stage1_duration if 'stage1_duration' in locals() else None,
                 'stage2_duration': None,
                 'total_episode_duration': episode_duration,
+                'stage1_model': 'gemini',
+                'stage2_model': 'internvl2.5',
                 'status': 'error',
                 'error_message': str(e),
                 'timestamp': time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(episode_start_time))
@@ -371,7 +347,8 @@ async def process_universal_two_stage_pipeline(frame_paths, desc, embodiment, pr
             print(f"Error processing {frame_path}: {e}")
             print(f"  Episode time: {episode_duration:.2f}s")
             continue
-      # 计算总体运行时间
+    
+    # 计算总体运行时间
     total_end_time = time.time()
     total_duration = total_end_time - total_start_time
     
@@ -384,7 +361,8 @@ async def process_universal_two_stage_pipeline(frame_paths, desc, embodiment, pr
         'average_time_per_episode': total_duration / len(frame_paths) if len(frame_paths) > 0 else 0,
         'start_timestamp': time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(total_start_time)),
         'end_timestamp': time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(total_end_time)),
-        'prompt_version': prompt_version
+        'prompt_version': prompt_version,
+        'pipeline_type': 'hybrid_gemini_internvl'
     }
     
     print(f"\n=== Processing Summary ===")
@@ -392,7 +370,8 @@ async def process_universal_two_stage_pipeline(frame_paths, desc, embodiment, pr
     print(f"Total processing time: {total_duration:.2f}s")
     if len(all_results) > 0:
         print(f"Average time per episode: {total_duration/len(frame_paths):.2f}s")
-      # 保存第一阶段结果到单独文件
+    
+    # 保存第一阶段结果到单独文件
     if seg_result_file and seg_results_list:
         os.makedirs(os.path.dirname(seg_result_file), exist_ok=True)
         with open(seg_result_file, 'w', encoding='utf-8') as f:
@@ -413,10 +392,15 @@ async def process_universal_two_stage_pipeline(frame_paths, desc, embodiment, pr
             json.dump(time_report, f, ensure_ascii=False, indent=2)
         print(f"Time report saved to {time_report_file}")
     
+    # 清理模型资源
+    if torch.cuda.is_available():
+        torch.cuda.empty_cache()
+    gc.collect()
+    
     return all_results
 
 def main():
-    parser = argparse.ArgumentParser(description="Universal Two-stage RTX planning pipeline")
+    parser = argparse.ArgumentParser(description="Hybrid Two-stage RTX planning pipeline (Gemini + InternVL2.5)")
     parser.add_argument('--root', type=str, required=True, help="视频抽帧文件路径")
     parser.add_argument('--embodiment', type=str, default="franka-dual_arm")
     parser.add_argument('--json', type=str, required=True, help="描述文件路径")
@@ -424,6 +408,9 @@ def main():
     parser.add_argument('--prompt-version', type=str, default="v1", 
                        choices=get_available_versions(),
                        help="Prompt版本 (v1: task_summary+steps, v2: segments_only)")
+    parser.add_argument('--internvl-model-path', type=str, 
+                       default="/media/users/wd/hf/hf_models/InternVL3-78B",
+                       help="InternVL2.5模型路径")
     parser.add_argument('--verbose', action='store_true', help="是否调试，调试阶段不调用api")
     parser.add_argument('--rerun', action='store_true', help="是否重跑，默认加载已有结果")
     parser.add_argument('--max', type=int, default=0, help="最大请求数，默认是0，代表不限制")
@@ -431,13 +418,6 @@ def main():
                        help="是否在第二阶段包含第一阶段的step descriptions（默认包含）")
     parser.add_argument('--exclude-step-descriptions', action='store_true', 
                        help="不在第二阶段包含第一阶段的step descriptions")
-    # 混合模型支持参数
-    parser.add_argument('--stage2-model', type=str, default="gemini", 
-                       choices=["gemini", "internvl"],
-                       help="第二阶段使用的模型 (gemini: 云端API, internvl: 本地InternVL2.5)")
-    parser.add_argument('--internvl-model-path', type=str, 
-                       default="/media/users/wd/hf/hf_models/InternVL3-78B",
-                       help="InternVL2.5模型路径（仅在使用internvl时需要）")
     args = parser.parse_args()
 
     # 记录main函数开始时间
@@ -452,17 +432,17 @@ def main():
     desc_file = args.json
     result_file = args.output
     prompt_version = args.prompt_version
-    stage2_model = args.stage2_model
-    internvl_model_path = args.internvl_model_path if args.stage2_model == "internvl" else None
 
     desc = parse_rtx_desc(desc_file)
     frame_paths = glob.glob(f"{root_dir}/*episode_*")
-      # choose only the frames with description
+    # choose only the frames with description
     frame_paths = [p for p in frame_paths if os.path.basename(p) in desc]
     
+    print(f"=== Hybrid Pipeline Setup ===")
     print(f"Available prompt versions: {get_available_versions()}")
     print(f"Using prompt version: {prompt_version}")
     print(f"Include step descriptions in stage 2: {include_step_descriptions}")
+    print(f"InternVL model path: {args.internvl_model_path}")
     print()
     
     print(frame_paths)
@@ -488,14 +468,15 @@ def main():
     
     if not args.verbose and frame_paths:
         # 生成第一阶段结果文件路径
-        seg_result_file = result_file.replace('.json', '_segmentation.json')        # 运行通用两阶段管道
-        results = asyncio.run(process_universal_two_stage_pipeline(
+        seg_result_file = result_file.replace('.json', '_segmentation.json')
+        
+        # 运行混合两阶段管道
+        results = asyncio.run(process_hybrid_two_stage_pipeline(
             frame_paths, desc, args.embodiment, prompt_version, result_file, seg_result_file, 
-            include_step_descriptions, stage2_model, internvl_model_path
-        ))
+            include_step_descriptions, args.internvl_model_path))
         print(f"Processed {len(results)} episodes")
         
-        # 打印token使用统计
+        # 打印Gemini token使用统计（仅第一阶段）
         print_token_usage_summary()
         
         # 保存token使用报告
@@ -509,7 +490,10 @@ def main():
         results = []
 
     # 合并结果
-    all_results = has_results + results    # 保存结果
+    all_results = has_results + results
+    
+    # 保存结果
+    os.makedirs(os.path.dirname(result_file), exist_ok=True)
     json.dump(all_results, open(result_file, 'w'), ensure_ascii=False, indent=2)
     print(f"Results saved to {result_file}")
     
