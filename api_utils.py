@@ -9,7 +9,7 @@ from cv_utils import reshape_frame_to_512, encode_frame_cv
 # base_url="http://180.184.174.65:3000/v1"
 base_url="https://generativelanguage.googleapis.com/v1beta/openai/"
 # base_url="https://dashscope.aliyuncs.com/compatible-mode/v1"
-api_key="AIzaSyBX2-EBZ6fSJtZ8szMTEl3TndOmqInQtbw" # gemini
+api_key="#######" # gemini
 # api_key="sk-0fb97d6740c24e4fbb8b1393a6368295"
 client = AsyncOpenAI(base_url=base_url, api_key=api_key)
 
